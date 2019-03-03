@@ -131,10 +131,11 @@ func bucketClient(ctx context.Context, authPath string) (*storage.Client, error)
 }
 
 func index(ctx context.Context, b *storage.BucketHandle) (*repo.IndexFile, error) {
+	i := repo.NewIndexFile()
 	r, err := b.Object(indexFile).NewReader(ctx)
 	if err != nil {
 		if err == storage.ErrObjectNotExist {
-			return repo.NewIndexFile(), nil
+			return i, nil
 		}
 		return nil, err
 	}
@@ -142,7 +143,6 @@ func index(ctx context.Context, b *storage.BucketHandle) (*repo.IndexFile, error
 	if err != nil {
 		return nil, err
 	}
-	i := &repo.IndexFile{}
 	if err := yaml.Unmarshal(data, i); err != nil {
 		return i, err
 	}
